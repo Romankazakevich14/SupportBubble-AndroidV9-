@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Foreground-app detection config for AppMonitorService.
+
+  FLICKER FIX — subscribe to typeWindowStateChanged ONLY.
+
+  typeWindowStateChanged   — fires when a new window/activity comes to front. This
+                             is the single authoritative signal for an app switch
+                             and the ONLY event we react to.
+
+  typeWindowsChanged and typeWindowContentChanged are deliberately NOT subscribed.
+  Both fire when our own floating bubble overlay is shown/hidden (a window-list /
+  content change). Handling them re-resolved the foreground package via
+  getRootInActiveWindow(), which could echo our own overlay window and flip
+  currentApp — toggling the bubble, which fired another window event, and so on.
+  That feedback loop made the bubble blink (~1s visible / ~3s hidden) even when the
+  user did nothing.
+
+  Because we no longer read window content, canRetrieveWindowContent is false and
+  flagRetrieveInteractiveWindows is omitted.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/accessibility_service_description"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:notificationTimeout="100"
+    android:canRetrieveWindowContent="false" />
